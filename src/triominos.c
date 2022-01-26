@@ -110,11 +110,6 @@ int dessinerTriangleMain(SDL_Renderer* renderer ,int x, int y){
 }
 
 
-
-
-
-
-
 // ###################
 // ### Ecrire Main ###
 // ###################
@@ -230,24 +225,6 @@ char intToString(int x){
 	char string = x+'0';
 	return string; 
 }
-
-
-// #####################
-// ### Event Handler ###
-// ##################### 
-
-
-// void Window::pollEvents(){
-// 	SDL_Event event;
-
-// 	if(SDL_PollEvent(&event)){
-// 		if (event.type == SDL_MOUSEBUTTOMDOWN){
-// 			printf("x > %d", event.motion.x);
-// 			printf("y > %d", event.motion.y);
-// 		}
-// 	}
-// }
-
 
 
 // ######################
@@ -401,6 +378,236 @@ void ecrireJoueur(SDL_Renderer *renderer, char *pseudo){
 	TTF_CloseFont(font);
 	TTF_Quit();
 }
+// #####################
+// ### Afficher Logo ###
+// ##################### 
+
+void afficherLogo(SDL_Renderer *renderer){
+	SDL_Surface *logo = NULL;
+	SDL_Texture *t_logo = NULL;
+	logo = SDL_LoadBMP("images/LOGO.bmp");
+	if(logo == NULL){
+		SDL_Log("Error: SDL_LoadBMP > %s\n",SDL_GetError());
+		exit(-1);
+	}
+	t_logo = SDL_CreateTextureFromSurface(renderer,logo);
+	SDL_FreeSurface(logo);
+	SDL_Rect rectLogo;
+	SDL_QueryTexture(t_logo,NULL,NULL,&rectLogo.w,&rectLogo.h); 
+	rectLogo.x = (650 - rectLogo.w)/2;
+	rectLogo.y =30;
+	SDL_RenderCopy(renderer,t_logo,NULL,&rectLogo); 
+}
+
+// #######################
+// ### Afficher Pioche ###
+// #######################
+
+void afficherPiocheTitre(SDL_Renderer *renderer){
+	SDL_Rect rectPioche = {475,10,100,100};
+	SDL_RenderDrawRect(renderer,&rectPioche);
+
+	TTF_Init();
+	TTF_Font * font = TTF_OpenFont("font/arial.ttf",155);
+	SDL_Color colorfont = {255,255,255};
+	SDL_Rect dstrect = {480,15,80,15};
+	SDL_Surface * surface = TTF_RenderText_Solid(font, "Pioche:", colorfont);
+	SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer,surface);
+	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surface);
+	TTF_CloseFont(font);
+	TTF_Quit();
+
+} 
+
+void afficherPioche(SDL_Renderer *renderer){
+	TTF_Init();
+	TTF_Font * font = TTF_OpenFont("font/arial.ttf",55);
+	SDL_Color colorfont = {0,0,0};
+	SDL_Rect dstrect = {485,30,80,75};
+	SDL_RenderFillRect(renderer,&dstrect);
+	SDL_Surface * surface = TTF_RenderText_Solid(font, "02", colorfont);
+	SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer,surface);
+	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surface);
+	TTF_CloseFont(font);
+	TTF_Quit();	
+}
+
+// ####################
+// ### Gerer Grille ###
+// ####################
+int trouverJ(int clicY){
+	if(150 < clicY && clicY < 200){
+		return 0;
+	}else if(200 < clicY && clicY < 250){
+		return 1;
+	}else if(250 < clicY && clicY < 300){
+		return 2;
+	}else if(300 < clicY && clicY < 350){
+		return 3;
+	}else if(350 < clicY && clicY < 400){
+		return 4;
+	}else if(400 < clicY && clicY < 450){
+		return 5;
+	}else if(450 < clicY && clicY < 500){
+		return 6;
+	}else if(500 < clicY && clicY < 550){
+		return 7;
+	}else if(550 < clicY && clicY < 600){
+		return 8;
+	}else if(600 < clicY && clicY < 650){
+		return 9;
+	}else{
+		return -1;
+	}
+}
+
+
+int trouverI_aux(int index, int clicX, int clicY, int indexJ, bool premierHaut, bool repetition){
+	int caseX = grille[index][indexJ].coordX;
+	int caseY = grille[index][indexJ].coordY;
+
+	if(premierHaut){
+		//PREMIER HAUT : 
+		//INDEX PAIRE -> vers le bas
+		//INDEX IMPAIRE -> vers le haut
+		if(index%2){ // haut
+			if(
+			 	(caseX-37<clicX && clicX<caseX+38 && clicY+8<caseY && caseY<clicY+23) ||
+				(caseX-25<clicX && clicX<caseX+25 && clicY-7<caseY && caseY<clicY+8) ||				
+				(caseX-12<clicX && clicX<caseX+13 && clicY-22<caseY && caseY<clicY-7)				
+				){
+				return index;
+			}
+			else{ 
+				if(repetition){
+					if(caseX<clicX){
+						return trouverI_aux(index+1, clicX, clicY, indexJ, premierHaut, false);
+					} else {
+						return trouverI_aux(index-1, clicX, clicY, indexJ, premierHaut, false);
+					}
+				} else {
+					return -1;
+				} 
+			}
+		} else { // bas
+			if(
+			  	(caseX-37<clicX && clicX<caseX+38 && clicY-22<caseY && caseY<clicY-7) ||
+				(caseX-25<clicX && clicX<caseX+25 && clicY-7<caseY && caseY<clicY+8) ||				
+				(caseX-12<clicX && clicX<caseX+13 && clicY+8<caseY && caseY<clicY+23)			
+				){
+				return index;
+			}
+			else{ 
+				if(repetition){
+					if(caseX<clicX){
+						return trouverI_aux(index+1, clicX, clicY, indexJ, premierHaut, false);
+					} else {
+						return trouverI_aux(index-1, clicX, clicY, indexJ, premierHaut, false);
+					}
+				} else {
+					return -1;
+				} 
+			}
+		}
+	}else{
+		//PREMIER BAS : 
+		//INDEX PAIRE -> vers le haut
+		//INDEX IMPAIRE -> vers le bas
+		if(index%2){ // haut
+			if(
+			 	(caseX-37<clicX && clicX<caseX+38 && clicY+8<caseY && caseY<clicY+23) ||
+				(caseX-25<clicX && clicX<caseX+25 && clicY-7<caseY && caseY<clicY+8) ||				
+				(caseX-12<clicX && clicX<caseX+13 && clicY-22<caseY && caseY<clicY-7)				
+				){
+				return index;
+			}
+			else{ 
+				if(repetition){
+					if(caseX<clicX){
+						return trouverI_aux(index+1, clicX, clicY, indexJ, premierHaut, false);
+					} else {
+						return trouverI_aux(index-1, clicX, clicY, indexJ, premierHaut, false);
+					}
+				} else {
+					return -1;
+				} 
+			}
+
+		} else { // bas
+			if(
+				(caseX-37<clicX && clicX<caseX+38 && clicY-22<caseY && caseY<clicY-7) ||
+				(caseX-25<clicX && clicX<caseX+25 && clicY-7<caseY && caseY<clicY+8) ||				
+				(caseX-12<clicX && clicX<caseX+13 && clicY+8<caseY && caseY<clicY+23)			
+				){
+				return index;
+			}
+			else{ 
+				if(repetition){
+					if(caseX<clicX){
+						return trouverI_aux(index+1, clicX, clicY, indexJ, premierHaut, false);
+					} else {
+						return trouverI_aux(index-1, clicX, clicY, indexJ, premierHaut, false);
+					}
+				} else {
+					return -1;
+				} 
+			}
+		}
+	}
+}
+
+int trouverI(int clicX,int clicY, int indexJ){
+	bool premierHaut;
+	if(indexJ%2){
+		premierHaut = true;
+	}else{
+		premierHaut = false;
+	}
+
+	if(60 < clicX && clicX < 120){
+		return trouverI_aux(0, clicX, clicY, indexJ, premierHaut, true);
+	}else if(120 < clicX && clicX < 160){
+		return trouverI_aux(1, clicX, clicY, indexJ, premierHaut, true);
+	}else if(160 < clicX && clicX < 210){
+		return trouverI_aux(2, clicX, clicY, indexJ, premierHaut, true);
+	}else if(210 < clicX && clicX < 260){
+		return trouverI_aux(3, clicX, clicY, indexJ, premierHaut, true);
+	}else if(260 < clicX && clicX < 310){
+		return trouverI_aux(4, clicX, clicY, indexJ, premierHaut, true);
+	}else if(310 < clicX && clicX < 360){
+		return trouverI_aux(5, clicX, clicY, indexJ, premierHaut, true);
+	}else if(360 < clicX && clicX < 410){
+		return trouverI_aux(6, clicX, clicY, indexJ, premierHaut, true);
+	}else if(410 < clicX && clicX < 460){
+		return trouverI_aux(7, clicX, clicY, indexJ, premierHaut, true);
+	}else if(460 < clicX && clicX < 510){
+		return trouverI_aux(8, clicX, clicY, indexJ, premierHaut, true);
+	}else if(510 < clicX && clicX < 588){
+		return trouverI_aux(9, clicX, clicY, indexJ, premierHaut, true);
+	}else{
+		printf("retour direct\n");
+		return -1;
+	}
+}
+
+void gereClicGrille(int clicX, int clicY){
+	int indexI, indexJ; //Index pour recup la case dans la grille I = longeur / J = hauteur
+
+	indexJ = trouverJ(clicY);
+	indexI = trouverI(clicX,clicY,indexJ);
+
+	printf("GRILLE INDEX : i = %d -- j = %d \n",indexI,indexJ);
+	if(indexJ == -1 || indexI == -1){
+		exit;
+	}
+
+	// case selectionné : grille[indexI][indexJ]
+}
+
 
 // ##############
 // ### main() ###
@@ -443,9 +650,21 @@ int main(int argc, char **argv){
 	creerGrille(renderer);
 	ecrireJoueurTitre(renderer);
 	ecrireJoueur(renderer,"Gabin");
+	afficherLogo(renderer);
+	afficherPiocheTitre(renderer);
+	afficherPioche(renderer);
 	// recritureScore(30);
 
 	int i,j;
+
+	//TEST VISUEL BOUTON
+	SDL_Rect rectangleTest;
+	rectangleTest.x = 30;
+	rectangleTest.y = 665;
+	rectangleTest.w = 595;
+	rectangleTest.h = 70;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
 
 	//Une main de jeu: à titre indicatif
 	int CoordXCase = 70;
@@ -481,21 +700,61 @@ int main(int argc, char **argv){
 		CoordXCase = CoordXCase + 85;
 	}
 
+	SDL_Rect rect;
+	rect.x =60;
+	rect.y = 150;
+	rect.w = 528;
+	rect.h = 500;
+	SDL_RenderDrawRect(renderer,&rect);
+
+
 	SDL_RenderPresent(renderer);
 
-	// while (!window.isClosed()){
-	// 	window.pollEvents();
-	// }
+	SDL_bool progBool = SDL_TRUE;
+
+	while(progBool){		
+		SDL_Event event;
+		while(SDL_PollEvent(&event)){
+			switch(event.type)
+			{
+				case SDL_QUIT:
+					progBool = SDL_FALSE;
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					printf("x: %d // y: %d ",event.button.x,event.button.y);
+
+					if(475<event.button.x && event.button.x <575 && 10<event.button.y && event.button.y<110){
+						//BOUTON PIOCHE
+						printf("Jai pioche chef !\n");
+					} else if(600<event.button.x && event.button.x <650 && 0<event.button.y && event.button.y<50){
+						//BOUTON QUITTER / MENU
+						printf("Jai quitte chef...\n");
+					} else if(60<event.button.x && event.button.x <588 && 150<event.button.y && event.button.y<650){
+						//GRILLE
+						gereClicGrille(event.button.x,event.button.y);
+						printf("Grille\n");
+					} else if(30<event.button.x && event.button.x <625 && 665<event.button.y && event.button.y<735){
+						//MAIN
+						printf("C'est la main\n");
+
+					}else{
+						printf("raté\n");
+					}
+
+					break;
+				default:
+					break;
+			}
+
+		}
+	} 
 
 
-	//####################################################################//
 	if(SDL_RenderClear(renderer) != 0){
 		SDL_Log("Error: SDL_RenderClear > %s\n",SDL_GetError());
 		exit(-1);
 	}
 	
-	SDL_Delay(25000); // en milliseconde -> 1sec = 1000 
-
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
@@ -506,13 +765,108 @@ int main(int argc, char **argv){
 
 // gcc src/triominos.c -o bin/tri -I include -L lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf
 
-/**
-Notes à moi-même (à suppr):
-//placement 
-//void placerTriominos(int coordx,int coordy,Triominos trio)
-if([i]%2 == [j]%2) //si les deux sont impairs ou les deux paires, alors on positionne d'une certaine manière
-	position = haut
-else
-	position = bas //si une coord est pair l'autre impair, alors on positionne de l'autre
 
+
+/** HAUT
+ 	(caseX-37<clicX && clicX<caseX+38 && clicY+8<caseY && caseY<clicY+23) ||
+	(caseX-25<clicX && clicX<caseX+25 && clicY-7<caseY && caseY<clicY+8) ||				
+	(caseX-12<clicX && clicX<caseX+13 && clicY-22<caseY && caseY<clicY-7)				
 **/
+
+/** BAS
+  	(caseX-37<clicX && clicX<caseX+38 && clicY-22<caseY && caseY<clicY-7) ||
+	(caseX-25<clicX && clicX<caseX+25 && clicY-7<caseY && caseY<clicY+8) ||				
+	(caseX-12<clicX && clicX<caseX+13 && clicY+8<caseY && caseY<clicY+23)			
+**/
+
+
+
+// #############
+// ### TESTS ###
+// #############
+
+
+void dessinTestHitBox(SDL_Renderer *renderer){
+	int caseX = grille[0][0].coordX;
+	int caseY = grille[0][0].coordY;	
+	SDL_Rect rectangleTest;
+	rectangleTest.x = caseX - 37;
+	rectangleTest.y = caseY + 8;
+	rectangleTest.w = 75;
+	rectangleTest.h = 15;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+	rectangleTest.x = caseX - 25;
+	rectangleTest.y = caseY - 7;
+	rectangleTest.w = 50;
+	rectangleTest.h = 17;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+	rectangleTest.x = caseX - 12;
+	rectangleTest.y = caseY - 22;
+	rectangleTest.w = 25;
+	rectangleTest.h = 15;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+
+	caseX = grille[3][0].coordX;
+	caseY = grille[3][0].coordY;	
+	rectangleTest.x = caseX - 37;
+	rectangleTest.y = caseY - 22;
+	rectangleTest.w = 75;
+	rectangleTest.h = 15;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+	rectangleTest.x = caseX - 25;
+	rectangleTest.y = caseY - 7;
+	rectangleTest.w = 50;
+	rectangleTest.h = 17;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+	rectangleTest.x = caseX - 12;
+	rectangleTest.y = caseY + 8;
+	rectangleTest.w = 25;
+	rectangleTest.h = 15;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+	caseX = grille[0][3].coordX;
+	caseY = grille[0][3].coordY;
+	rectangleTest.x = caseX - 37;
+	rectangleTest.y = caseY - 22;
+	rectangleTest.w = 75;
+	rectangleTest.h = 15;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+	rectangleTest.x = caseX - 25;
+	rectangleTest.y = caseY - 7;
+	rectangleTest.w = 50;
+	rectangleTest.h = 17;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+	rectangleTest.x = caseX - 12;
+	rectangleTest.y = caseY + 8;
+	rectangleTest.w = 25;
+	rectangleTest.h = 15;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+	caseX = grille[1][1].coordX;
+	caseY = grille[1][1].coordY;	
+	rectangleTest.x = caseX - 37;
+	rectangleTest.y = caseY + 8;
+	rectangleTest.w = 75;
+	rectangleTest.h = 15;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+	rectangleTest.x = caseX - 25;
+	rectangleTest.y = caseY - 7;
+	rectangleTest.w = 50;
+	rectangleTest.h = 17;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+
+	rectangleTest.x = caseX - 12;
+	rectangleTest.y = caseY - 22;
+	rectangleTest.w = 25;
+	rectangleTest.h = 15;
+	SDL_RenderDrawRect(renderer,&rectangleTest);
+}
+

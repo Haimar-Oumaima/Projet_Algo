@@ -33,6 +33,7 @@ typedef struct Liste_joueur
 	JOUEUR Joueurs[4];
 }LISTE_JOUEUR;
 
+/*
 // Définition du type POINT
 	typedef struct point {int x,y;} POINT;
 	
@@ -40,122 +41,8 @@ typedef struct Liste_joueur
 	
 	// Définition du type COULEUR
 	typedef Uint32 COULEUR;
-
-TRIOMINOS piocher_1_triominosAuDebut(JOUEUR);
-
-
-//POINT
-POINT wait_clic()
-	{
-	int encore = 1;
-	POINT P;
-	SDL_Event event;
-	P.x = 0;
-	P.y = 0;
-#ifdef EN_LOCAL
-// A ne mettre que si on est en local, sur les ordi des étudiants, c'est trop lent
-	#ifdef SDL_TTF_OK
-		POINT E,F;
-		char S[16];
-		E.x = WIDTH - 55; E.y = 15;
-		F.x = WIDTH; F.y = 0;
-	#endif
-#endif
-	while (SDL_WaitEvent(&event) && encore)
-		{
-		/* Si l'utilisateur clique avec la souris */
-		if ((event.type == SDL_MOUSEBUTTONDOWN) && (event.button.button == SDL_BUTTON_LEFT))
-			{
-			encore=0;
-			P.x = event.button.x;
-			P.y = event.button.y;
-			}
-		/* Si l'utilisateur déplace la souris */
-		if (event.type == SDL_MOUSEMOTION)
-			{
-#ifdef EN_LOCAL
-// A ne mettre que si on est en local, sur les ordi des étudiants, c'est trop lent
-			#ifdef SDL_TTF_OK
-				if (police[10]) 
-					{
-					draw_fill_rectangle(E,F,noir);
-					sprintf(S,"%4d %4d",event.motion.x,HEIGHT - event.motion.y);
-					aff_pol(S,10,E,gris);
-					affiche_all();
-					}
-			#endif
-#endif
-			printf("%cEn attente de clic ... %4d %4d           %c",13,event.motion.x,event.motion.y,13);
-			fflush(stdout);
-			}
-		/* Si l'utilisateur a demandé à fermer la fenêtre, on quitte */
-		if (event.type == SDL_QUIT) exit(0);
-	
-		}
-#ifdef EN_LOCAL
-// A ne mettre que si on est en local, sur les ordi des étudiants, c'est trop lent
-	#ifdef SDL_TTF_OK
-		aff_pol(S,10,E,noir);
-		//draw_fill_rectangle(E,F,jaune);
-		affiche_all();
-	#endif
-#endif
-	printf("%cClic en %4d %4d                                           \n",13,P.x,P.y);
-	___MOUSE_POSITION = P;
-	return P;
-	}
-//FIN POINT
-
-void aff_pol(char *a_ecrire, int taille, POINT p, COULEUR C)
-	{
-	#ifdef SDL_TTF_OK
-	    int i;
-	    SDL_Color color;
-	    SDL_Surface *texte = NULL;
-	    SDL_Rect position;
-	    static int premiere_fois = 1;
-	    static TTF_Font *police[256];
-	    TTF_Font *pol;
-	    
-	    // Initialisation de la police (n'est fait qu'une seule fois pour les tailles < 256)
-	    if (premiere_fois)  { TTF_Init(); for (i=0;i<256;i++) police[i] = NULL; premiere_fois = 0;}
-	    if (taille>=256) pol = TTF_OpenFont(POLICE_NAME, taille);
-		    else {
-			 if (police[taille]==NULL) police[taille] = TTF_OpenFont(POLICE_NAME, taille);
-		         pol = police[taille];
-			 }
-	    SDL_GetRGB(C,SDL_screen->format,&(color.r),&(color.g),&(color.b));
-
-	    /* Ecriture du texte dans la SDL_Surface "texte" en mode Blended (optimal) */
-	    if (pol) texte = TTF_RenderText_Blended(pol, a_ecrire, color); else texte = NULL;
-	    if (texte)  {
-		    	position.x = p.x;
-		    	position.y = HEIGHT - p.y;
-		    	SDL_BlitSurface(texte, NULL, SDL_screen, &position); /* Blit du texte par-dessus */
-	            	if (SDL_AFFICHE_AUTO) affiche_all();
-			SDL_FreeSurface(texte);
-		    	}
-		    else printf("%s\n",a_ecrire);
-/*	
-	    if (SDL_AFFICHE_AUTO) affiche_all();
-	    if (police) TTF_CloseFont(police);
-	    TTF_Quit();
-	    if (texte) SDL_FreeSurface(texte);
 */
-	#else 
-		taille = 0; p.x = p.y = 0; C = 0;
-		printf("%s\n",a_ecrire);
-	#endif
-	}
-
-	// 5.2 Affiche un entier
-	// Meme sémantique que aff_pol()
-void aff_int(int n,  int taille, POINT p, COULEUR C)
-	{
-	char s[32];
-	sprintf(s,"%d",n);
-	aff_pol(s,taille,p,C);
-	}
+TRIOMINOS piocher_1_triominosAuDebut(JOUEUR);
 
 /*================= MODELE =================*/
 

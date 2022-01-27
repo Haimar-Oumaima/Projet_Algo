@@ -335,7 +335,7 @@ void affiche_Aide_Triominos2(SDL_Renderer *rendu)
     SDL_RenderPresent(rendu);
 }
 
-void ecrire_Lettre1(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin) // num_L le numéro attaché à une lettre de 1 - 26
+void ecrire_Lettre1(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin)  
 {
     SDL_Surface *lettre = SDL_LoadBMP(chemin);
     SDL_Rect pos;
@@ -348,7 +348,7 @@ void ecrire_Lettre1(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin) // num_L l
     SDL_DestroyTexture(t_lettre);
     SDL_RenderPresent(rendu);
 }
-void ecrire_Lettre2(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin) // num_L le numéro attaché à une lettre de 1 - 26
+void ecrire_Lettre2(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin)  
 {
     SDL_Surface *lettre = SDL_LoadBMP(chemin);
     SDL_Rect pos;
@@ -361,7 +361,7 @@ void ecrire_Lettre2(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin) // num_L l
     SDL_DestroyTexture(t_lettre);
     SDL_RenderPresent(rendu);
 }
-void ecrire_Lettre3(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin) // num_L le numéro attaché à une lettre de 1 - 26
+void ecrire_Lettre3(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin)  
 {
     SDL_Surface *lettre = SDL_LoadBMP(chemin);
     SDL_Rect pos;
@@ -374,7 +374,7 @@ void ecrire_Lettre3(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin) // num_L l
     SDL_DestroyTexture(t_lettre);
     SDL_RenderPresent(rendu);
 }
-void ecrire_Lettre4(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin) // num_L le numéro attaché à une lettre de 1 - 26
+void ecrire_Lettre4(SDL_Renderer *rendu ,SDL_Rect rect, char* chemin)  
 {
     SDL_Surface *lettre = SDL_LoadBMP(chemin);
     SDL_Rect pos;

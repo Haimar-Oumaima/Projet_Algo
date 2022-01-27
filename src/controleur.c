@@ -1223,13 +1223,17 @@ while (program_lance)
                 }
                 
             }
+            else if(evenement.key.keysym.scancode == SDL_SCANCODE_0)
+            {
+                affiche_configuration(type_jeu,type_joueur,nbr_joueurs,pseudo1,pseudo2,pseudo3,pseudo4);
+            }
             else if(evenement.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
             {
                 program_lance = SDL_FALSE;
             }
             break;
-            case SDL_QUIT: program_lance = SDL_FALSE; /* la ligne suivante c' est pour tester : */ printf("type de jeu : %c type de joueur: %c , nombre de joueurs : %d " ,type_jeu,type_joueur,nbr_joueurs); 
-            break; // cas cliquer sur croix quitter
+            case SDL_QUIT: program_lance = SDL_FALSE; // cas cliquer sur croix quitter
+            break; 
             default : continue;
         }
     }

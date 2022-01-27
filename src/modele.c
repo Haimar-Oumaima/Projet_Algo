@@ -37,3 +37,32 @@ void bouton_Non_Selectione(SDL_Renderer *r ,SDL_Rect monBouton)
     }
     SDL_RenderPresent(r);
 }
+
+// FONCTION DE TEST :
+void affiche_configuration(char type_jeu , char type_joueur , int nbr_joueurs , char pseudo1[3], char pseudo2[3], char pseudo3[3], char pseudo4[3])
+{
+    printf(" type de jeu :  %c ", type_jeu) ;
+    printf(" type de joueurs :  %c ", type_joueur) ;
+    printf(" nbr de joueurs :  %d ", nbr_joueurs) ;
+    printf(" pseudo1 :  ");
+    for (size_t i = 0; i < 4; i++)
+    {
+        printf("%c",pseudo1[i]);
+    }
+     printf(" pseudo2 :  ");
+    for (size_t i = 0; i < 4; i++)
+    {
+        printf("%c",pseudo2[i]);
+    }
+     printf(" pseudo3 :  ");
+    for (size_t i = 0; i < 4; i++)
+    {
+        printf("%c",pseudo3[i]);
+    }
+     printf(" pseudo4 :  ");
+    for (size_t i = 0; i < 4; i++)
+    {
+        printf("%c",pseudo4[i]);
+    }
+
+}
